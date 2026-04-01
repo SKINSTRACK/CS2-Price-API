@@ -1,4 +1,4 @@
-```markdown
+
 # Skinstrack API
 
 Public API for accessing CS2 skin prices and market data aggregated across multiple marketplaces.
@@ -9,11 +9,9 @@ Public API for accessing CS2 skin prices and market data aggregated across multi
 
 ## Base URL
 
-```
-
 [https://api.skinstrack.com](https://api.skinstrack.com)
 
-````
+
 
 ---
 
@@ -23,9 +21,8 @@ All endpoints (including Free Plan) require an API key.
 
 ### Header format
 
-```bash
 x-api-key: YOUR_API_KEY
-````
+
 
 ---
 
