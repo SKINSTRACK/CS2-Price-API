@@ -121,6 +121,9 @@ curl https://api.skinstrack.com/v1/paid/items \
 
 ---
 
+## Watching Marketplaces like:
+avan.market, BitSkins, buff163, cs.deals, cs.trade, csfloat, csgo500, csgoempire, dmarket, ecosteam, gamerpay, haloskins, lis-skins, lootfarm, market.csgo, rapidskins, shadowpay, sih.app, skinbaron, skinout, skinport, steam, tradeit.gg, uuskins, waxpeer, white.market, youpin898
+
 ## Support
 
 👉 [https://skinstrack.com](https://skinstrack.com)
