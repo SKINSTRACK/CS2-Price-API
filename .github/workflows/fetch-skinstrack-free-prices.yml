@@ -18,14 +18,22 @@ jobs:
 
       - name: Fetch Free CS2 prices from API
         run: |
-          curl -s \
+          HTTP_STATUS=$(curl -s -w "%{http_code}" \
             -H "Accept: application/json" \
             -H "x-api-key: ${{ secrets.SKINSTRACK_FREE_API_KEY }}" \
             "${{ secrets.SKINSTRACK_FREE_API_URL }}" \
-            -o free_prices.json
+            -o free_prices.json)
+
+          echo "HTTP status: $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -gt 299 ]; then
+            echo "ERROR: API returned HTTP $HTTP_STATUS"
+            cat free_prices.json
+            exit 1
+          fi
 
           # Validate the response is valid JSON
-          if ! python3 -c "import json, sys; json.load(open('free_prices.json'))" 2>/dev/null; then
+          if ! python3 -c "import json; json.load(open('free_prices.json'))" 2>/dev/null; then
             echo "ERROR: API did not return valid JSON"
             cat free_prices.json
             exit 1
@@ -41,7 +49,6 @@ jobs:
           with open("free_prices.json", "r") as f:
               data = json.load(f)
 
-          # Wrap with metadata if it's a plain list/dict
           output = {
               "fetched_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
               "source": "cs2-prices-api",
