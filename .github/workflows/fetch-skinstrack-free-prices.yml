@@ -1,0 +1,66 @@
+name: Fetch Free CS2 Item Prices
+
+on:
+  schedule:
+    - cron: '0 */5 * * *'
+  workflow_dispatch:
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch CS2 prices from API
+        run: |
+          curl -s \
+            -H "Accept: application/json" \
+            -H "x-api-key: ${{ secrets.CS2_API_KEY }}" \
+            "${{ secrets.CS2_API_URL }}" \
+            -o free_prices.json
+
+          # Validate the response is valid JSON
+          if ! python3 -c "import json, sys; json.load(open('free_prices.json'))" 2>/dev/null; then
+            echo "ERROR: API did not return valid JSON"
+            cat free_prices.json
+            exit 1
+          fi
+
+          echo "Fetched $(python3 -c "import json; data=json.load(open('free_prices.json')); print(len(data) if isinstance(data, list) else 'N/A')" 2>/dev/null || echo '?') items"
+
+      - name: Add metadata timestamp
+        run: |
+          python3 - <<'EOF'
+          import json, datetime
+
+          with open("free_prices.json", "r") as f:
+              data = json.load(f)
+
+          # Wrap with metadata if it's a plain list/dict
+          output = {
+              "fetched_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+              "source": "cs2-prices-api",
+              "data": data
+          }
+
+          with open("free_prices.json", "w") as f:
+              json.dump(output, f, indent=2)
+
+          print("Timestamp added:", output["fetched_at"])
+          EOF
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add free_prices.json
+
+          if git diff --cached --quiet; then
+            echo "No changes to free prices — skipping commit"
+          else
+            git commit -m "chore: update CS2 free prices [$(date -u '+%Y-%m-%d %H:%M UTC')]"
+            git push
+          fi
