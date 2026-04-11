@@ -2,11 +2,14 @@ name: Fetch Free CS2 Item Prices
 
 on:
   schedule:
-    - cron: '0 */5 * * *'
+    - cron: '0 0 * * *'
   workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: write
 
 jobs:
   fetch-and-commit:
@@ -56,7 +59,7 @@ jobs:
           }
 
           with open("free_prices.json", "w") as f:
-              json.dump(output, f, indent=2)
+              json.dump(output, f, indent=2, ensure_ascii=False)
 
           print("Timestamp added:", output["fetched_at"])
           EOF
