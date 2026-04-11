@@ -17,8 +17,8 @@ jobs:
         run: |
           curl -s \
             -H "Accept: application/json" \
-            -H "x-api-key: ${{ secrets.CS2_API_KEY }}" \
-            "${{ secrets.CS2_API_URL }}" \
+            -H "x-api-key: ${{ secrets.SKINSTRACK_FREE_API_KEY }}" \
+            "${{ secrets.SKINSTRACK_FREE_API_URL }}" \
             -o free_prices.json
 
           # Validate the response is valid JSON
