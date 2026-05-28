@@ -3,6 +3,9 @@
 
 Public API for accessing CS2 skin prices and market data aggregated across multiple marketplaces.
 
+* Skinstrack offers a free, limited API endpoint that returns Steam item prices. Paid plans additionally provide access to pricing data from multiple marketplaces, making it possible to compare prices across different markets through a single API.
+* The CS2 Skins Price API provides real-time price data for Counter-Strike 2 weapon skins aggregated from +30 marketplaces including Buff163, CSFloat, Skinport, and Steam Market. It includes endpoints for skin prices.
+
 ## Full API Documentation
 
 [https://skinstrack.com/api-docs](https://skinstrack.com/api-docs)
