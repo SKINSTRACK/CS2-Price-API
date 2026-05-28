@@ -8,7 +8,7 @@ Public API for accessing CS2 skin prices and market data aggregated across multi
 
 ## Full API Documentation
 
-[https://skinstrack.com/api-docs](https://skinstrack.com/api-docs)
+[https://skinstrack.com/api-docs](https://skinstrack.com/api-docs?utm_source=github.com)
 
 ## Base URL
 
@@ -129,6 +129,6 @@ avan.market, BitSkins, buff163, cs.deals, cs.trade, csfloat, csgo500, csgoempire
 
 ## Support
 
-👉 [https://skinstrack.com](https://skinstrack.com)
+👉 [https://skinstrack.com](https://skinstrack.com?utm_source=github.com)
 
 ---
