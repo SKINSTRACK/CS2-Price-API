@@ -24,7 +24,7 @@ jobs:
           HTTP_STATUS=$(curl -s -w "%{http_code}" \
             -H "Accept: application/json" \
             -H "x-api-key: ${{ secrets.SKINSTRACK_FREE_API_KEY }}" \
-            "https://api.skinstrack.com/v2/free/items" \
+            "${{ secrets.SKINSTRACK_FREE_API_URL }}" \
             -o free_prices.json)
 
           echo "HTTP status: $HTTP_STATUS"
@@ -69,7 +69,7 @@ jobs:
           HTTP_STATUS=$(curl -s -w "%{http_code}" \
             -H "Accept: application/json" \
             -H "x-api-key: ${{ secrets.SKINSTRACK_FREE_API_KEY }}" \
-            "https://api.skinstrack.com/v2/free/stickers" \
+            "${{ secrets.SKINSTRACK_FREE_STICKERS_API_URL }}" \
             -o free_sticker_prices.json)
 
           echo "HTTP status: $HTTP_STATUS"
