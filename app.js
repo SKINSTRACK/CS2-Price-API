@@ -3,7 +3,7 @@ async function GetSteamPrices() {
     // Data is filtered to only include items with prices from Steam. For more comprehensive data, please consider upgrading to a paid plan and use /api/v1/paid/items endpoint.
     // Data may be cached and updated less frequently than paid endpoints. For real-time data, please consider upgrading to a paid plan and use /api/v1/paid/items endpoint.
     try {
-        const response = await fetch('https://api.skinstrack.com/v1/free/items', {
+        const response = await fetch('https://api.skinstrack.com/v2/free/items', {
             headers: {
                 'x-api-key': 'YOUR_SECRET_TOKEN'
             }
@@ -20,6 +20,32 @@ async function GetSteamPrices() {
         return itemsPrice;
     } catch(error) {
         console.error('[GetSteamPrices] Error fetching Steam prices:', error);
+        return [];
+    }
+}
+
+async function GetStickerPrices() {
+    // This endpoint is free 50 calls/month limit. For more calls and faster updates, please consider upgrading to a paid plan and use /api/v1/paid/items endpoint.
+    // Data is filtered to only include stickers with prices from Steam. For more comprehensive data, please consider upgrading to a paid plan and use /api/v1/paid/items endpoint.
+    // Data may be cached and updated less frequently than paid endpoints. For real-time data, please consider upgrading to a paid plan and use /api/v1/paid/items endpoint.
+    try {
+        const response = await fetch('https://api.skinstrack.com/v2/free/stickers', {
+            headers: {
+                'x-api-key': 'YOUR_SECRET_TOKEN'
+            }
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`[GetStickerPrices] Fetch error! status: ${response.status} response: ${errorText}`);
+        }
+
+        const data = await response.json();
+
+        const stickerPrices = data?.items || [];
+        return stickerPrices;
+    } catch(error) {
+        console.error('[GetStickerPrices] Error fetching sticker prices:', error);
         return [];
     }
 }
@@ -47,4 +73,7 @@ async function GetSteamPrices() {
     //         }
     //     ]
     // }
+
+    const stickerPrices = await GetStickerPrices();
+    console.log('[GetStickerPrices]', stickerPrices[0], stickerPrices.length);
 })();

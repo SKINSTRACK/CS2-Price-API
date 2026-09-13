@@ -24,7 +24,7 @@ jobs:
           HTTP_STATUS=$(curl -s -w "%{http_code}" \
             -H "Accept: application/json" \
             -H "x-api-key: ${{ secrets.SKINSTRACK_FREE_API_KEY }}" \
-            "${{ secrets.SKINSTRACK_FREE_API_URL }}" \
+            "https://api.skinstrack.com/v2/free/items" \
             -o free_prices.json)
 
           echo "HTTP status: $HTTP_STATUS"
@@ -64,12 +64,57 @@ jobs:
           print("Timestamp added:", output["fetched_at"])
           EOF
 
+      - name: Fetch Free CS2 sticker prices from API
+        run: |
+          HTTP_STATUS=$(curl -s -w "%{http_code}" \
+            -H "Accept: application/json" \
+            -H "x-api-key: ${{ secrets.SKINSTRACK_FREE_API_KEY }}" \
+            "https://api.skinstrack.com/v2/free/stickers" \
+            -o free_sticker_prices.json)
+
+          echo "HTTP status: $HTTP_STATUS"
+
+          if [ "$HTTP_STATUS" -lt 200 ] || [ "$HTTP_STATUS" -gt 299 ]; then
+            echo "ERROR: API returned HTTP $HTTP_STATUS"
+            cat free_sticker_prices.json
+            exit 1
+          fi
+
+          # Validate the response is valid JSON
+          if ! python3 -c "import json; json.load(open('free_sticker_prices.json'))" 2>/dev/null; then
+            echo "ERROR: API did not return valid JSON"
+            cat free_sticker_prices.json
+            exit 1
+          fi
+
+          echo "Fetched $(python3 -c "import json; data=json.load(open('free_sticker_prices.json')); print(len(data) if isinstance(data, list) else 'N/A')" 2>/dev/null || echo '?') stickers"
+
+      - name: Add metadata timestamp (stickers)
+        run: |
+          python3 - <<'EOF'
+          import json, datetime
+
+          with open("free_sticker_prices.json", "r") as f:
+              data = json.load(f)
+
+          output = {
+              "fetched_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+              "source": "cs2-prices-api",
+              "data": data
+          }
+
+          with open("free_sticker_prices.json", "w") as f:
+              json.dump(output, f, indent=2, ensure_ascii=False)
+
+          print("Timestamp added:", output["fetched_at"])
+          EOF
+
       - name: Commit and push if changed
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add free_prices.json
+          git add free_prices.json free_sticker_prices.json
 
           if git diff --cached --quiet; then
             echo "No changes to free prices — skipping commit"

@@ -36,13 +36,13 @@ The free plan provides limited access to item price data.
 ### Endpoint
 
 ```
-GET /v1/free/items
+GET /v2/free/items
 ```
 
 ### Example Request
 
 ```bash
-curl https://api.skinstrack.com/v1/free/items \
+curl https://api.skinstrack.com/v2/free/items \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -86,6 +86,21 @@ curl https://api.skinstrack.com/v1/free/items \
 * Data is filtered to include only items with prices from Steam.
 * Data may be cached and updated less frequently than paid endpoints.
 * For more requests, real-time updates, and full marketplace coverage, upgrade to the paid plan.
+
+---
+
+### Stickers Endpoint
+
+```
+GET /v2/free/stickers
+```
+
+### Example Request
+
+```bash
+curl https://api.skinstrack.com/v2/free/stickers \
+  -H "x-api-key: YOUR_API_KEY"
+```
 
 ---
 
