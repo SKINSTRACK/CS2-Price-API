@@ -106,18 +106,56 @@ curl https://api.skinstrack.com/v2/free/stickers \
 
 ## Paid Plan (Recommended)
 
-For production usage, higher rate limits, and full marketplace coverage:
+For production usage, higher rate limits, and full marketplace coverage. Requires a paid plan API key.
 
 ### Endpoint
 
 ```
-GET /v1/paid/items
+GET /v2/paid/items
 ```
+
+Retrieves a list of items with their prices from specified providers. Results can be filtered by provider and market hash names. Optionally includes average, median, and price change statistics via query flags. Prices, average, and median are in USD by default; pass `currency` to convert.
+
+### Parameters
+
+| Name | In | Type | Description |
+|---|---|---|---|
+| `providers` | query | string | Comma-separated list of marketplace providers to include. Default: `csfloat,waxpeer`. Example: `csfloat,buff163,youpin,dmarket,marketcsgo` |
+| `market_hash_names` | query | string | Comma-separated list of market hash names or slugs to filter by. Example: `USP-S \| Whiteout (Battle-Scarred),AK-47 \| Redline (Field-Tested)` |
+| `avg` | query | string | Include average price statistics grouped by time periods (7d, 14d, 30d, 60d, 90d). Example: `true` |
+| `median` | query | string | Include median price statistics grouped by time periods (7d, 14d, 30d, 60d, 90d). Example: `true` |
+| `changes` | query | string | Include price change percentage statistics grouped by time periods (1d, 7d, 14d, 30d, 60d, 90d). Example: `true` |
+| `currency` | query | string | ISO 4217 currency code for all returned prices (and average/median where present). Rates refresh every 12 hours. Unknown codes return 400. Default: `USD`. Example: `EUR` |
 
 ### Example Request
 
 ```bash
-curl https://api.skinstrack.com/v1/paid/items \
+curl "https://api.skinstrack.com/v2/paid/items?providers=csfloat,buff163&avg=true&currency=EUR" \
+  -H "x-api-key: YOUR_API_KEY"
+```
+
+---
+
+### Stickers Endpoint
+
+```
+GET /v2/paid/stickers
+```
+
+Retrieves a list of CS2 stickers with their prices from specified providers. Results can be filtered by provider and market hash names. Prices are in USD by default; pass `currency` to convert. Requires a paid plan API key.
+
+#### Parameters
+
+| Name | In | Type | Description |
+|---|---|---|---|
+| `providers` | query | string | Comma-separated list of marketplace providers to include. Default: `csfloat,waxpeer`. Example: `csfloat,waxpeer,dmarket,marketcsgo` |
+| `market_hash_names` | query | string | Comma-separated list of sticker market hash names or slugs to filter by. Example: `Sticker \| Crown (Foil)` |
+| `currency` | query | string | ISO 4217 currency code for all returned prices (and average/median where present). Rates refresh every 12 hours. Unknown codes return 400. Default: `USD`. Example: `EUR` |
+
+#### Example Request
+
+```bash
+curl "https://api.skinstrack.com/v2/paid/stickers?providers=csfloat,waxpeer&currency=EUR" \
   -H "x-api-key: YOUR_API_KEY"
 ```
 
@@ -140,7 +178,7 @@ curl https://api.skinstrack.com/v1/paid/items \
 ---
 
 ## Watching Marketplaces like:
-avan.market, BitSkins, buff163, cs.deals, cs.trade, csfloat, csgo500, csgoempire, dmarket, ecosteam, gamerpay, haloskins, lis-skins, lootfarm, market.csgo, rapidskins, shadowpay, sih.app, skinbaron, skinout, skinport, steam, tradeit.gg, uuskins, waxpeer, white.market, youpin898
+avan.market, BitSkins, Buff.163, Buff.Market, CS.Deals, CSFloat, CSGO500, CSGOEmpire, cs.money, cs.money TRADE, CS.Trade, DMarket, Ecosteam, GamerPay, HaloSkins, Lis-skins, LootFarm, Market.CSGO, RapidSkins, ShadowPay, SIH.app, SkinBaron, SKINFLOW, SkinOut, Skinport, SKINSWAP, SKINSWAP CN, Steam, TradeIt.GG, UUSkins, Waxpeer, White.Market, YouPin898
 
 ## Support
 
