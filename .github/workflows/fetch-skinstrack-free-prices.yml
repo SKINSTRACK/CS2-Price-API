@@ -19,7 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fetch Free CS2 prices from API
+      - name: Fetch Free CS2 prices from SKINSTRACK API
         run: |
           HTTP_STATUS=$(curl -s -w "%{http_code}" \
             -H "Accept: application/json" \
