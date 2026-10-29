@@ -1,79 +1,31 @@
-async function GetSteamPrices() {
-    // This endpoint is free 50 calls/month limit. For more calls and faster updates, please consider upgrading to a paid plan and use /api/v1/paid/items endpoint.
-    // Data is filtered to only include items with prices from Steam. For more comprehensive data, please consider upgrading to a paid plan and use /api/v1/paid/items endpoint.
-    // Data may be cached and updated less frequently than paid endpoints. For real-time data, please consider upgrading to a paid plan and use /api/v1/paid/items endpoint.
-    try {
-        const response = await fetch('https://api.skinstrack.com/v2/free/items', {
-            headers: {
-                'x-api-key': 'YOUR_SECRET_TOKEN'
-            }
-        });
+const API_URL = 'https://api.skinstrack.com';
+const API_KEY = process.env.SKINSTRACK_API_KEY;
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`[GetSteamPrices] Fetch error! status: ${response.status} response: ${errorText}`);
-        }
+async function getFree(path, listKey) {
+    const response = await fetch(`${API_URL}${path}`, {
+        headers: { 'x-api-key': API_KEY }
+    });
 
-        const data = await response.json();
-
-        const itemsPrice = data?.items || [];
-        return itemsPrice;
-    } catch(error) {
-        console.error('[GetSteamPrices] Error fetching Steam prices:', error);
-        return [];
+    if (!response.ok) {
+        throw new Error(`${path} returned ${response.status}: ${await response.text()}`);
     }
+
+    const data = await response.json();
+    return data?.[listKey] || [];
 }
 
-async function GetStickerPrices() {
-    // This endpoint is free 50 calls/month limit. For more calls and faster updates, please consider upgrading to a paid plan and use /api/v1/paid/items endpoint.
-    // Data is filtered to only include stickers with prices from Steam. For more comprehensive data, please consider upgrading to a paid plan and use /api/v1/paid/items endpoint.
-    // Data may be cached and updated less frequently than paid endpoints. For real-time data, please consider upgrading to a paid plan and use /api/v1/paid/items endpoint.
-    try {
-        const response = await fetch('https://api.skinstrack.com/v2/free/stickers', {
-            headers: {
-                'x-api-key': 'YOUR_SECRET_TOKEN'
-            }
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`[GetStickerPrices] Fetch error! status: ${response.status} response: ${errorText}`);
-        }
-
-        const data = await response.json();
-
-        const stickerPrices = data?.items || [];
-        return stickerPrices;
-    } catch(error) {
-        console.error('[GetStickerPrices] Error fetching sticker prices:', error);
-        return [];
-    }
-}
+const getSteamPrices = () => getFree('/v2/free/items', 'items');
+const getStickerPrices = () => getFree('/v2/free/stickers', 'stickers');
 
 (async () => {
-    const prices = await GetSteamPrices();
-    console.log('[GetSteamPrices]', prices[0], prices.length);
-    // price example:
-    // {
-    //     "market_hash_name": "★ Falchion Knife | Ultraviolet (Well-Worn)",
-    //     "slug": "falchion-knife-ultraviolet-well-worn",
-    //     "icon_url": "i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGIGz3UqlXOLrxM-vMGmW8VNxu5Dx60noTyL6kJ_m-B1d7v6tYK1iLs-AAViA1PxmvORWSSi_lhUuvDO6l4r9KD7KcFUoDZZ0R-IM50Xrm4fgMb_k41Dfjt1Nzi_43y9B6H1vtekKV_UgrqXJz1aW3qoAVI8",
-    //     "type": "skin",
-    //     "liquidity": 50,
-    //     "prices": [
-    //         {
-    //             "price": 120.86,
-    //             "count": 1,
-    //             "volume": 0,
-    //             "meta": {
-    //                 "buy_order": 105.01
-    //             },
-    //             "provider": "steam",
-    //             "updated_at": "2026-04-01T08:54:31.781Z"
-    //         }
-    //     ]
-    // }
+    if (!API_KEY) {
+        console.error('Set SKINSTRACK_API_KEY first');
+        process.exit(1);
+    }
 
-    const stickerPrices = await GetStickerPrices();
-    console.log('[GetStickerPrices]', stickerPrices[0], stickerPrices.length);
+    const items = await getSteamPrices();
+    console.log('items:', items.length, items[0]);
+
+    const stickers = await getStickerPrices();
+    console.log('stickers:', stickers.length, stickers[0]);
 })();
